@@ -20,7 +20,7 @@ app.post('/story', (req, res) => {
 
 app.put('/story/:_id', (req, res) => {
     const { content } = req.body;
-    Story.findByIdAndUpdate(req.params._id, { content })
+    Story.findByIdAndUpdate(req.params._id, { content }, { new: true })
     .then(story => {
         if (!story) throw new Error('Cannot find story');
         res.send({ success: true, story });
