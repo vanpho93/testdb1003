@@ -4,7 +4,7 @@ const { compareSync } = require('bcrypt');
 const { app } = require('../../../src/app');
 const { User } = require('../../../src/models/user.model');
 
-describe.only('Test POST /user/signup', () => {
+describe('Test POST /user/signup', () => {
     it('Can sign up', async () => {
         const body = {
             email: 'teo@gmail.com',
@@ -62,5 +62,4 @@ describe.only('Test POST /user/signup', () => {
         equal(userCount, 1);
     });
 });
-
 
