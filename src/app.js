@@ -2,19 +2,19 @@ const express = require('express');
 const { json } = require('body-parser');
 const { Story } = require('./models/story.model');
 const { UserService } = require('./services/user.service');
+const { StoryService } = require('./services/story.service');
 
 const app = express();
 app.use(json());
 
 app.get('/story', (req, res) => {
-    Story.find({})
+    StoryService.getAll()
     .then(stories => res.send({ success: true, stories }));
 });
 
 app.post('/story', (req, res) => {
     const { content } = req.body;
-    const story = new Story({ content });
-    story.save()
+    StoryService.createStory(content)
     .then(storyInfo => res.send({ success: true, story: storyInfo }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
