@@ -21,20 +21,14 @@ app.post('/story', (req, res) => {
 
 app.put('/story/:_id', (req, res) => {
     const { content } = req.body;
-    Story.findByIdAndUpdate(req.params._id, { content }, { new: true })
-    .then(story => {
-        if (!story) throw new Error('Cannot find story');
-        res.send({ success: true, story });
-    })
+    StoryService.updateStory(req.params._id, content)
+    .then(story => res.send({ success: true, story }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
 
 app.delete('/story/:_id', (req, res) => {
-    Story.findByIdAndRemove(req.params._id)
-    .then(story => {
-        if (!story) throw new Error('Cannot find story');
-        res.send({ success: true, story });
-    })
+    StoryService.removeStory(req.params._id)
+    .then(story => res.send({ success: true, story }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
 
