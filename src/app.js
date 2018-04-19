@@ -1,8 +1,7 @@
 const express = require('express');
 const { json } = require('body-parser');
-const { hash, compare } = require('bcrypt');
 const { Story } = require('./models/story.model');
-const { User } = require('./models/user.model');
+const { UserService } = require('./services/user.service');
 
 const app = express();
 app.use(json());
@@ -41,27 +40,14 @@ app.delete('/story/:_id', (req, res) => {
 
 app.post('/user/signin', (req, res) => {
     const { email, plainPassword } = req.body;
-    let user;
-    User.findOne({ email })
-    .then(u => {
-        if (!u) throw new Error('Cannot find user');
-        user = u;
-        return compare(plainPassword, u.password);
-    })
-    .then(same => {
-        if (!same) throw new Error('Invalid password');
-        return res.send({ success: true, user });
-    })
+    UserService.signIn(email, plainPassword)
+    .then(user => res.send({ success: true, user }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
 
 app.post('/user/signup', (req, res) => {
     const { email, plainPassword, name } = req.body;
-    hash(plainPassword, 8)
-    .then(encryptedPassword => {
-        const user = new User({ name, email, password: encryptedPassword });
-        return user.save();
-    })
+    UserService.signUp(email, plainPassword, name)
     .then(user => res.send({ success: true, user }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
