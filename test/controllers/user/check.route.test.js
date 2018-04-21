@@ -15,23 +15,34 @@ describe('Test GET /user/check', () => {
         _id = user._id;
     });
 
-    it.only('Can login with token', async () => {
+    it('Can login with token', async () => {
         const response = await request(app).get('/user/check').set({ token });
-        console.log(response.body);
+        // console.log(response.body);
+        equal(response.body.success, true);
+        const { name, email, password } = response.body.user;
+        equal(name, 'Teo Nguyen');
+        equal(email, 'teo@gmail.com');
+        equal(password, undefined);
+        const obj = await verify(response.body.user.token)
+        equal(_id, obj._id);
     });
 
-    xit('Can login without token', async () => {
-        const response = await request(app).get('/user/check').set({ token });
-        console.log(response.body);
+    it('Can login without token', async () => {
+        const response = await request(app).get('/user/check');
+        equal(response.body.success, false);
+        equal(response.body.message, 'jwt must be provided');
     });
 
-    xit('Can login with empty token', async () => {
-        const response = await request(app).get('/user/check').set({ token });
-        console.log(response.body);
+    it('Can login with empty token', async () => {
+        const response = await request(app).get('/user/check').set({ token: '' });
+        equal(response.body.success, false);
+        equal(response.body.message, 'jwt must be provided');
     });
 
-    xit('Can login with token for removed user', async () => {
+    it('Can login with token for removed user', async () => {
+        await User.findByIdAndRemove(_id);
         const response = await request(app).get('/user/check').set({ token });
-        console.log(response.body);
+        equal(response.body.success, false);
+        equal(response.body.message, 'Cannot find user');
     });
 });
