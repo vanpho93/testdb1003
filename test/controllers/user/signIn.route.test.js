@@ -3,6 +3,7 @@ const { equal } = require('assert');
 const { compareSync } = require('bcrypt');
 const { app } = require('../../../src/app');
 const { User } = require('../../../src/models/user.model');
+const { verify } = require('../../../src/helpers/jwt');
 
 describe('Test POST /user/signin', () => {
     beforeEach('Sign up user for test', async () => {
@@ -14,7 +15,7 @@ describe('Test POST /user/signin', () => {
         await request(app).post('/user/signup').send(body);
     });
 
-    it.only('Can sign in', async () => {
+    it('Can sign in', async () => {
         const body = {
             email: 'teo@gmail.com',
             plainPassword: '123'
@@ -22,9 +23,12 @@ describe('Test POST /user/signin', () => {
         const response = await request(app).post('/user/signin').send(body);
         // console.log(response.body);
         equal(response.body.success, true);
-        equal(response.body.user.name, 'Teo Nguyen');
-        equal(response.body.user.email, 'teo@gmail.com');
-        equal(response.body.user.password, undefined);
+        const { name, email, password, token, _id } = response.body.user;
+        equal(name, 'Teo Nguyen');
+        equal(email, 'teo@gmail.com');
+        equal(password, undefined);
+        const obj = await verify(token)
+        equal(_id, obj._id);
     });
 
     it('Cannot sign in with wrong email', async () => {
