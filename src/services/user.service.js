@@ -1,5 +1,5 @@
 const { hash, compare } = require('bcrypt');
-const { sign } = require('../helpers/jwt');
+const { sign, verify } = require('../helpers/jwt');
 const { User } = require('../models/user.model');
 
 class UserService {
@@ -21,6 +21,16 @@ class UserService {
         delete userInfo.password;
         userInfo.token = await sign({ _id: user._id });
         return userInfo;
+    }
+
+    static async check(token) {
+        const { _id } = await verify(token);
+        const user = await User.findById(_id);
+        if (!user) throw new Error('Cannot find user');
+        const userInfo = user.toObject();
+        delete userInfo.password;
+        userInfo.token = await sign({ _id: user._id });
+        return userInfo;      
     }
 }
 
