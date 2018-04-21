@@ -23,6 +23,7 @@ describe('Test POST /user/signin', () => {
         equal(response.body.success, true);
         equal(response.body.user.name, 'Teo Nguyen');
         equal(response.body.user.email, 'teo@gmail.com');
+        equal(response.body.user.password, undefined);
     });
 
     it('Cannot sign in with wrong email', async () => {

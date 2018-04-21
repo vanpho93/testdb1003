@@ -15,6 +15,7 @@ describe('Test POST /user/signup', () => {
         equal(response.body.success, true);
         equal(response.body.user.name, 'Teo Nguyen');
         equal(response.body.user.email, 'teo@gmail.com');
+        equal(response.body.user.password, undefined);
         const user = await User.findOne({});
         equal(user.name, 'Teo Nguyen');
         equal(user.email, 'teo@gmail.com');
