@@ -14,12 +14,13 @@ describe('Test POST /user/signin', () => {
         await request(app).post('/user/signup').send(body);
     });
 
-    it('Can sign in', async () => {
+    it.only('Can sign in', async () => {
         const body = {
             email: 'teo@gmail.com',
             plainPassword: '123'
         }
         const response = await request(app).post('/user/signin').send(body);
+        // console.log(response.body);
         equal(response.body.success, true);
         equal(response.body.user.name, 'Teo Nguyen');
         equal(response.body.user.email, 'teo@gmail.com');

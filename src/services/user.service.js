@@ -1,4 +1,5 @@
 const { hash, compare } = require('bcrypt');
+const { sign } = require('../helpers/jwt');
 const { User } = require('../models/user.model');
 
 class UserService {
@@ -18,6 +19,7 @@ class UserService {
         if (!same) throw new Error('Invalid password');
         const userInfo = user.toObject();
         delete userInfo.password;
+        userInfo.token = await sign({ _id: user._id });
         return userInfo;
     }
 }
