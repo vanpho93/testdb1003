@@ -3,7 +3,7 @@ const { equal } = require('assert');
 const { app } = require('../../../src/app');
 const { Story } = require('../../../src/models/story.model');
 
-describe('Test DELETE /story/:_id', () => {
+xdescribe('Test DELETE /story/:_id', () => {
     let idStory;
     beforeEach('Create new story for test', async () => {
         const story = new Story({ content: 'abcd' });
