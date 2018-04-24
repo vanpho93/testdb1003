@@ -19,7 +19,8 @@ storyRouter.post('/', (req, res) => {
 
 storyRouter.put('/:_id', (req, res) => {
     const { content } = req.body;
-    StoryService.updateStory(req.params._id, content)
+    verify(req.headers.token)
+    .then(obj => StoryService.updateStory(obj._id, req.params._id, content))
     .then(story => res.send({ success: true, story }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
