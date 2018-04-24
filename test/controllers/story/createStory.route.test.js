@@ -5,7 +5,7 @@ const { Story } = require('../../../src/models/story.model');
 const { User } = require('../../../src/models/user.model');
 const { UserService } = require('../../../src/services/user.service');
 
-describe('Test POST /story', () => {
+describe.only('Test POST /story', () => {
     let token, _id;
     beforeEach('Sign up user for test', async () => {
         await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
@@ -14,7 +14,7 @@ describe('Test POST /story', () => {
         _id = user._id;
     });
 
-    it.only('Can create new story', async () => {
+    it('Can create new story', async () => {
         const response = await request(app)
         .post('/story')
         .set({ token })
@@ -37,8 +37,10 @@ describe('Test POST /story', () => {
     it('Cannot create new story with empty content', async () => {
         const response = await request(app)
         .post('/story')
+        .set({ token })
         .send({ content: '' });
         const { success, story } = response.body;
+        console.log(response.body);
         equal(response.status, 400);
         equal(success, false);
         equal(story, undefined);
