@@ -1,6 +1,5 @@
 const { Router } = require('express');
 const { StoryService } = require('../services/story.service');
-const { verify } = require('../helpers/jwt');
 const { mustBeUser } = require('./mustBeUser.middleware');
 
 const storyRouter = Router();
