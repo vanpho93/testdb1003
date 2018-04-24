@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { StoryService } = require('../services/story.service');
+const { verify } = require('../helpers/jwt');
 
 const storyRouter = Router();
 
@@ -10,7 +11,8 @@ storyRouter.get('/', (req, res) => {
 
 storyRouter.post('/', (req, res) => {
     const { content } = req.body;
-    StoryService.createStory(content)
+    verify(req.headers.token)
+    .then(obj => StoryService.createStory(obj._id, content))
     .then(storyInfo => res.send({ success: true, story: storyInfo }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });

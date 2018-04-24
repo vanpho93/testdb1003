@@ -1,12 +1,14 @@
 const { Story } = require('../models/story.model');
+const { User } = require('../models/user.model');
 
 class StoryService {
     static getAll() {
         return Story.find({});
     }
 
-    static createStory(content) {
-        const story = new Story({ content });
+    static async createStory(idUser, content) {
+        const story = new Story({ content, author: idUser });
+        await User.findByIdAndUpdate(idUser, { $push: { stories: story._id } });
         return story.save();
     }
 

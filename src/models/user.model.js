@@ -9,6 +9,8 @@ const userSchema = new Schema({
     stories: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Story' }]
 });
 
+// models -> services -> route -> test
+
 const User = mongoose.model('User', userSchema);
 
 module.exports = { User };
