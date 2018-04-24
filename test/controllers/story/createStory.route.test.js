@@ -20,15 +20,18 @@ describe('Test POST /story', () => {
         .set({ token })
         .send({ content: 'ABCD' });
         const { success, story } = response.body;
-        // console.log(response.body);
-        // equal(success, true);
-        // equal(story.content, 'ABCD');
+        equal(success, true);
+        equal(story.content, 'ABCD');
         const storyDb = await Story.findOne({}).populate('author');
-        console.log(storyDb);
-        // const user = await User.findById(_id).populate('stories');
-        // console.log(user);
-        // equal(storyDb.content, 'ABCD');
-        // equal(storyDb._id, story._id);
+        
+        equal(storyDb.content, 'ABCD');
+        equal(storyDb._id, story._id);
+        equal(storyDb.author._id.toString(), _id);
+        equal(storyDb.author.name, 'Teo Nguyen');
+
+        const user = await User.findById(_id).populate('stories');
+        equal(user.stories[0]._id, story._id);
+        equal(user.stories[0].content, 'ABCD');
     });
 
     it('Cannot create new story with empty content', async () => {
