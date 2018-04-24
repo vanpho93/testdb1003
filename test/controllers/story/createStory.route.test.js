@@ -40,7 +40,6 @@ describe('Test POST /story', () => {
         .set({ token })
         .send({ content: '' });
         const { success, story } = response.body;
-        console.log(response.body);
         equal(response.status, 400);
         equal(success, false);
         equal(story, undefined);
