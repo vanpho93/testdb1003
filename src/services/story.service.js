@@ -13,9 +13,10 @@ class StoryService {
     }
 
     static async updateStory(idUser, _id, content) {
-        const story = await Story.findOneAndUpdate({ _id, author: idUser }, { content }, { new: true });
+        const query = { _id, author: idUser };
+        const story = await Story.findOneAndUpdate(query, { content }, { new: true });
         if (!story) throw new Error('Cannot find story');
-        return story;        
+        return story;
     }
 
     static async removeStory(_id, content) {

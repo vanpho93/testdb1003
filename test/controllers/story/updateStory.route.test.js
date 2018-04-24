@@ -25,31 +25,40 @@ describe.only('Test PUT /story/:_id', () => {
         .put('/story/' + idStory)
         .set({ token: token1 })
         .send({ content: 'AAA' });
-        console.log(response.body);
-        // equal(response.body.success, true);
-        // equal(response.body.story.content, 'AAA');
-        // const story = await Story.findOne({});
-        // equal(story.content, 'AAA');
+        equal(response.body.success, true);
+        equal(response.body.story.content, 'AAA');
+        const story = await Story.findOne({});
+        equal(story.content, 'AAA');
     });
 
-    xit('Cannot update story with invalid id', async () => {
+    it('Cannot update story with invalid id', async () => {
         const response = await request(app)
         .put('/story/xyz')
+        .set({ token: token1 })
         .send({ content: 'AAA' });
         equal(response.body.success, false);
         equal(response.status, 400);
         const story = await Story.findOne({});
-        equal(story.content, 'abcd');
+        equal(story.content, 'xyz');
     });
 
-    xit('Cannot update a removed story', async () => {
+    it('Cannot update a removed story', async () => {
         await Story.findByIdAndRemove(idStory);
         const response = await request(app)
         .put('/story/' + idStory)
+        .set({ token: token1 })
         .send({ content: 'AAA' });
         equal(response.body.success, false);
         equal(response.status, 400);
         const story = await Story.findOne({});
         equal(story, null);
+    });
+
+    it('Cannot update a story with token2', async () => {
+        
+    });
+
+    it('Cannot update a story without token', async () => {
+        
     });
 });
