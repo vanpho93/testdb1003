@@ -1,5 +1,6 @@
 const { Story } = require('../models/story.model');
 const { User } = require('../models/user.model');
+const { MyError } = require('../models/my-error.model');
 
 class StoryService {
     static getAll() {
@@ -7,6 +8,7 @@ class StoryService {
     }
 
     static async createStory(idUser, content) {
+        if (!content) throw new MyError('CONTENT_MUST_BE_PROVIDED', 400);
         const story = new Story({ content, author: idUser });
         await User.findByIdAndUpdate(idUser, { $push: { stories: story._id } });
         return story.save();

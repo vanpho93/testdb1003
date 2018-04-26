@@ -6,7 +6,7 @@ function mustBeUser(req, res, next) {
         req.idUser = obj._id;
         next();
     })
-    .catch(error => res.status(400).send({ success: false, message: 'invalid token' }))
+    .catch(error => res.status(400).send({ success: false, message: 'INVALID_TOKEN' }))
 }
 
 module.exports = { mustBeUser };

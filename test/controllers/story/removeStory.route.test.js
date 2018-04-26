@@ -6,7 +6,7 @@ const { User } = require('../../../src/models/user.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 
-describe.only('Test DELETE /story/:_id', () => {
+describe('Test DELETE /story/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory;
     
     beforeEach('Create new story for test', async () => {

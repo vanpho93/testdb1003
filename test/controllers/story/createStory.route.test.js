@@ -5,7 +5,7 @@ const { Story } = require('../../../src/models/story.model');
 const { User } = require('../../../src/models/user.model');
 const { UserService } = require('../../../src/services/user.service');
 
-describe('Test POST /story', () => {
+describe.only('Test POST /story', () => {
     let token, _id;
     beforeEach('Sign up user for test', async () => {
         await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
@@ -39,9 +39,23 @@ describe('Test POST /story', () => {
         .post('/story')
         .set({ token })
         .send({ content: '' });
-        const { success, story } = response.body;
+        const { success, story, message } = response.body;
         equal(response.status, 400);
         equal(success, false);
+        equal(message, 'CONTENT_MUST_BE_PROVIDED');
+        equal(story, undefined);
+        const storyDb = await Story.findOne({});
+        equal(storyDb, null);
+    });
+
+    it('Cannot create new story without token', async () => {
+        const response = await request(app)
+        .post('/story')
+        .send({ content: 'ABCD' });
+        const { success, story, message } = response.body;
+        equal(response.status, 400);
+        equal(success, false);
+        equal(message, 'INVALID_TOKEN');
         equal(story, undefined);
         const storyDb = await Story.findOne({});
         equal(storyDb, null);
