@@ -26,7 +26,7 @@ storyRouter.put('/:_id', (req, res) => {
 });
 
 storyRouter.delete('/:_id', (req, res) => {
-    StoryService.removeStory(req.params._id)
+    StoryService.removeStory(req.idUser, req.params._id)
     .then(story => res.send({ success: true, story }))
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });

@@ -4,41 +4,35 @@ const { app } = require('../../../src/app');
 const { Story } = require('../../../src/models/story.model');
 
 xdescribe('Test DELETE /story/:_id', () => {
-    let idStory;
+    let token1, idUser1, token2, idUser2, idStory;
+    
     beforeEach('Create new story for test', async () => {
-        const story = new Story({ content: 'abcd' });
-        await story.save();
-        idStory = story._id;
+        await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
+        await UserService.signUp('ti@gmail.com', '123', 'Ti Nguyen');
+        const user1 = await UserService.signIn('teo@gmail.com', '123');
+        const user2 = await UserService.signIn('ti@gmail.com', '123');
+        token1 = user1.token;
+        idUser1 = user1._id;
+        token2 = user2.token;
+        idUser2 = user2._id;
+        const story = await StoryService.createStory(idUser1, 'xyz');
+        idStory = story._id
     });
 
     it('Can remove a story', async () => {
-        const response = await request(app).delete('/story/' + idStory);
-        const { success, story } = response.body;
-        equal(success, true);
-        equal(story.content, 'abcd');
-        const storyDb = await Story.findOne({});
-        equal(storyDb, null);
     });
 
     it('Cannot remove story with invalid id', async () => {
-        const response = await request(app).delete('/story/abcd');
-        const { success, story } = response.body;
-        equal(success, false);
-        equal(story, undefined);
-        equal(response.status, 400);
-        const storyDb = await Story.findOne({});
-        equal(storyDb.content, 'abcd');
     });
 
     it('Cannot remove a removed story', async () => {
-        await Story.findByIdAndRemove(idStory);
-        const response = await request(app).delete('/story/' + idStory);
-        const { success, story, message } = response.body;
-        equal(success, false);
-        equal(story, undefined);
-        equal(response.status, 400);
-        equal(message, 'Cannot find story');
-        const storyDb = await Story.findOne({});
-        equal(storyDb, null);
+    });
+
+    it('Cannot remove story without token', async () => {
+
+    });
+
+    it('Cannot remove story with token 2', async () => {
+
     });
 });
