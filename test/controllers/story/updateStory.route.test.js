@@ -5,7 +5,7 @@ const { Story } = require('../../../src/models/story.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 
-describe('Test PUT /story/:_id', () => {
+describe.only('Test PUT /story/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory;
     beforeEach('Create new story for test', async () => {
         await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
@@ -20,16 +20,15 @@ describe('Test PUT /story/:_id', () => {
         idStory = story._id
     });
 
-    it.only('Can update a story', async () => {
+    it('Can update a story', async () => {
         const response = await request(app)
-        .put('/story/' + 123)
+        .put('/story/' + idStory)
         .set({ token: token1 })
         .send({ content: 'AAA' });
-        console.log(response.body);
-        // equal(response.body.success, true);
-        // equal(response.body.story.content, 'AAA');
-        // const story = await Story.findOne({});
-        // equal(story.content, 'AAA');
+        equal(response.body.success, true);
+        equal(response.body.story.content, 'AAA');
+        const story = await Story.findOne({});
+        equal(story.content, 'AAA');
     });
 
     it('Cannot update story with invalid id', async () => {
@@ -38,6 +37,7 @@ describe('Test PUT /story/:_id', () => {
         .set({ token: token1 })
         .send({ content: 'AAA' });
         equal(response.body.success, false);
+        equal(response.body.message, 'INVALID_ID');
         equal(response.status, 400);
         const story = await Story.findOne({});
         equal(story.content, 'xyz');
@@ -50,7 +50,8 @@ describe('Test PUT /story/:_id', () => {
         .set({ token: token1 })
         .send({ content: 'AAA' });
         equal(response.body.success, false);
-        equal(response.status, 400);
+        equal(response.body.message, 'CANNOT_FIND_STORY');
+        equal(response.status, 404);
         const story = await Story.findOne({});
         equal(story, null);
     });
@@ -62,6 +63,8 @@ describe('Test PUT /story/:_id', () => {
         .send({ content: 'AAA' });
         equal(response.body.success, false);
         equal(response.body.story, undefined);
+        equal(response.body.message, 'CANNOT_FIND_STORY');
+        equal(response.status, 404);
         const story = await Story.findOne({});
         equal(story.content, 'xyz');
     });
@@ -71,7 +74,8 @@ describe('Test PUT /story/:_id', () => {
         .put('/story/' + idStory)
         .send({ content: 'AAA' });
         equal(response.body.success, false);
-        equal(response.body.story, undefined);
+        equal(response.body.message, 'INVALID_TOKEN');
+        equal(response.status, 400);
         const story = await Story.findOne({});
         equal(story.content, 'xyz');
     });
