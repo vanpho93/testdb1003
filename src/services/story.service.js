@@ -1,6 +1,7 @@
 const { Story } = require('../models/story.model');
 const { User } = require('../models/user.model');
 const { MyError } = require('../models/my-error.model');
+const { checkObjectId } = require('../helpers/checkObjectId');
 
 class StoryService {
     static getAll() {
@@ -15,6 +16,7 @@ class StoryService {
     }
 
     static async updateStory(idUser, _id, content) {
+        checkObjectId(_id);
         const query = { _id, author: idUser };
         const story = await Story.findOneAndUpdate(query, { content }, { new: true });
         if (!story) throw new Error('Cannot find story');

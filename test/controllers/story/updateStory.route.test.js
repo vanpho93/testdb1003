@@ -20,15 +20,16 @@ describe('Test PUT /story/:_id', () => {
         idStory = story._id
     });
 
-    it('Can update a story', async () => {
+    it.only('Can update a story', async () => {
         const response = await request(app)
-        .put('/story/' + idStory)
+        .put('/story/' + 123)
         .set({ token: token1 })
         .send({ content: 'AAA' });
-        equal(response.body.success, true);
-        equal(response.body.story.content, 'AAA');
-        const story = await Story.findOne({});
-        equal(story.content, 'AAA');
+        console.log(response.body);
+        // equal(response.body.success, true);
+        // equal(response.body.story.content, 'AAA');
+        // const story = await Story.findOne({});
+        // equal(story.content, 'AAA');
     });
 
     it('Cannot update story with invalid id', async () => {
