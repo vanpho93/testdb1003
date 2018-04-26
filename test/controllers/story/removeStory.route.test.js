@@ -2,6 +2,7 @@ const request = require('supertest');
 const { equal } = require('assert');
 const { app } = require('../../../src/app');
 const { Story } = require('../../../src/models/story.model');
+const { User } = require('../../../src/models/user.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 
@@ -21,20 +22,51 @@ describe.only('Test DELETE /story/:_id', () => {
         idStory = story._id
     });
 
-    it('Can remove a story', async () => {
+    it.only('Can remove a story', async () => {
+        const response = await request(app)
+        .delete('/story/' + idStory)
+        .set({ token: token1 });
+        const { story, success } = response.body;
+        equal(success, true);
+        equal(story._id, idStory);
+        equal(story.content, 'xyz');
+        const storyDb = await Story.findById(idStory);
+        equal(storyDb, null);
+        const user = await User.findById(idUser1);
+        equal(user.stories.length, 0);
     });
 
     it('Cannot remove story with invalid id', async () => {
+        const response = await request(app)
+        .delete('/story/' + 123)
+        .set({ token: token1 });
+        const { story, success } = response.body;
+        equal(success, false);
+        const storyDb = await Story.findById(idStory);
+        equal(storyDb._id.toString(), idStory);
     });
 
     it('Cannot remove a removed story', async () => {
+        await StoryService.removeStory(idUser1, idStory);
+        const response = await request(app)
+        .delete('/story/' + idStory)
+        .set({ token: token1 });
+        const { story, success } = response.body;
+        equal(success, false);
     });
 
     it('Cannot remove story without token', async () => {
-
+        const response = await request(app)
+        .delete('/story/' + idStory)
+        const { story, success } = response.body;
+        equal(success, false);
     });
 
     it('Cannot remove story with token 2', async () => {
-
+        const response = await request(app)
+        .delete('/story/' + idStory)
+        .set({ token: token2 });
+        const { story, success } = response.body;
+        equal(success, false);
     });
 });
