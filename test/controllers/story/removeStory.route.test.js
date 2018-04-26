@@ -22,7 +22,7 @@ describe.only('Test DELETE /story/:_id', () => {
         idStory = story._id
     });
 
-    it.only('Can remove a story', async () => {
+    it('Can remove a story', async () => {
         const response = await request(app)
         .delete('/story/' + idStory)
         .set({ token: token1 });
