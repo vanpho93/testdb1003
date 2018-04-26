@@ -2,8 +2,10 @@ const request = require('supertest');
 const { equal } = require('assert');
 const { app } = require('../../../src/app');
 const { Story } = require('../../../src/models/story.model');
+const { UserService } = require('../../../src/services/user.service');
+const { StoryService } = require('../../../src/services/story.service');
 
-xdescribe('Test DELETE /story/:_id', () => {
+describe.only('Test DELETE /story/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory;
     
     beforeEach('Create new story for test', async () => {
