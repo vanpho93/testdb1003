@@ -5,7 +5,17 @@ const { storyRouter } = require('./controllers/story.route');
 const { userRouter } = require('./controllers/user.route');
 
 const app = express();
+
 app.use(json());
+
+app.use((req, res, next) => {
+    res.onError = function(error) {
+        const body = { success: false, message: error.message };
+        if (!error.statusCode) console.log(error);
+        res.status(error.statusCode || 500).send(body);
+    };
+    next();
+});
 
 app.use('/story', storyRouter);
 app.use('/user', userRouter);
