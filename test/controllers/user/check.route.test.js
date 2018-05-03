@@ -27,22 +27,25 @@ describe('Test GET /user/check', () => {
         equal(_id, obj._id);
     });
 
-    it('Can login without token', async () => {
+    it('Cannot login without token', async () => {
         const response = await request(app).get('/user/check');
         equal(response.body.success, false);
-        equal(response.body.message, 'jwt must be provided');
+        equal(response.body.message, 'INVALID_TOKEN');
+        equal(response.status, 400);
     });
 
     it('Can login with empty token', async () => {
         const response = await request(app).get('/user/check').set({ token: '' });
         equal(response.body.success, false);
-        equal(response.body.message, 'jwt must be provided');
+        equal(response.body.message, 'INVALID_TOKEN');
+        equal(response.status, 400);
     });
 
     it('Can login with token for removed user', async () => {
         await User.findByIdAndRemove(_id);
         const response = await request(app).get('/user/check').set({ token });
         equal(response.body.success, false);
-        equal(response.body.message, 'Cannot find user');
+        equal(response.body.message, 'CANNOT_FIND_USER');
+        equal(response.status, 404);
     });
 });

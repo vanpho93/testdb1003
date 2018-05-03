@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const { UserService } = require('../services/user.service');
+const { mustBeUser } = require('./mustBeUser.middleware');
 
 const userRouter = Router();
 
@@ -17,11 +18,10 @@ userRouter.post('/signup', (req, res) => {
     .catch(error => res.status(400).send({ success: false, message: error.message }));
 });
 
-userRouter.get('/check', (req, res) => {
-    const { token } = req.headers;
-    UserService.check(token)
+userRouter.get('/check', mustBeUser, (req, res) => {
+    UserService.check(req.idUser)
     .then(user => res.send({ success: true, user }))
-    .catch(error => res.status(400).send({ success: false, message: error.message }));
+    .catch(res.onError);
 });
 
 module.exports = { userRouter };

@@ -24,10 +24,9 @@ class UserService {
         return userInfo;
     }
 
-    static async check(token) {
-        const { _id } = await verify(token);
-        const user = await User.findById(_id);
-        if (!user) throw new Error('Cannot find user');
+    static async check(idUser) {
+        const user = await User.findById(idUser);
+        if (!user) throw new MyError('CANNOT_FIND_USER', 404);
         const userInfo = user.toObject();
         delete userInfo.password;
         userInfo.token = await sign({ _id: user._id });
