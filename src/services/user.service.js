@@ -1,6 +1,7 @@
 const { hash, compare } = require('bcrypt');
 const { sign, verify } = require('../helpers/jwt');
 const { User } = require('../models/user.model');
+const { MyError } = require('../models/my-error.model');
 
 class UserService {
     static async signUp(email, plainPassword, name) {
@@ -14,9 +15,9 @@ class UserService {
 
     static async signIn(email, plainPassword) {
         const user = await User.findOne({ email });
-        if (!user) throw new Error('Cannot find user');
+        if (!user) throw new MyError('INVALID_USER_INFO', 400);
         const same = await compare(plainPassword, user.password);
-        if (!same) throw new Error('Invalid password');
+        if (!same) throw new MyError('INVALID_USER_INFO', 400);
         const userInfo = user.toObject();
         delete userInfo.password;
         userInfo.token = await sign({ _id: user._id });

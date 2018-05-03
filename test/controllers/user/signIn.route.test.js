@@ -39,7 +39,7 @@ describe('Test POST /user/signin', () => {
         const response = await request(app).post('/user/signin').send(body);
         equal(response.body.success, false);
         equal(response.body.user, undefined);
-        equal(response.body.message, 'Cannot find user');
+        equal(response.body.message, 'INVALID_USER_INFO');
         equal(response.status, 400);
     });
 
@@ -51,7 +51,7 @@ describe('Test POST /user/signin', () => {
         const response = await request(app).post('/user/signin').send(body);
         equal(response.body.success, false);
         equal(response.body.user, undefined);
-        equal(response.body.message, 'Invalid password');
+        equal(response.body.message, 'INVALID_USER_INFO');
         equal(response.status, 400);
     });
 
@@ -63,7 +63,7 @@ describe('Test POST /user/signin', () => {
         const response = await request(app).post('/user/signin').send(body);
         equal(response.body.success, false);
         equal(response.body.user, undefined);
-        equal(response.body.message, 'Cannot find user');
+        equal(response.body.message, 'INVALID_USER_INFO');
         equal(response.status, 400);
     });
 });

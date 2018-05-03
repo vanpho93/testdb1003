@@ -7,7 +7,7 @@ userRouter.post('/signin', (req, res) => {
     const { email, plainPassword } = req.body;
     UserService.signIn(email, plainPassword)
     .then(user => res.send({ success: true, user }))
-    .catch(error => res.status(400).send({ success: false, message: error.message }));
+    .catch(res.onError);
 });
 
 userRouter.post('/signup', (req, res) => {
