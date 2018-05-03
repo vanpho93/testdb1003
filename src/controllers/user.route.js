@@ -15,7 +15,7 @@ userRouter.post('/signup', (req, res) => {
     const { email, plainPassword, name } = req.body;
     UserService.signUp(email, plainPassword, name)
     .then(user => res.send({ success: true, user }))
-    .catch(error => res.status(400).send({ success: false, message: error.message }));
+    .catch(res.onError);
 });
 
 userRouter.get('/check', mustBeUser, (req, res) => {
