@@ -40,8 +40,11 @@ describe('Test DELETE /story/:_id', () => {
         const response = await request(app)
         .delete('/story/' + 123)
         .set({ token: token1 });
-        const { story, success } = response.body;
+        const { story, success, message } = response.body;
         equal(success, false);
+        equal(story, undefined);
+        equal(message, 'INVALID_ID');
+        equal(response.status, 400);
         const storyDb = await Story.findById(idStory);
         equal(storyDb._id.toString(), idStory);
     });
@@ -51,22 +54,30 @@ describe('Test DELETE /story/:_id', () => {
         const response = await request(app)
         .delete('/story/' + idStory)
         .set({ token: token1 });
-        const { story, success } = response.body;
+        const { story, success, message } = response.body;
         equal(success, false);
+        equal(story, undefined);
+        equal(message, 'CANNOT_FIND_STORY');
+        equal(response.status, 404);
     });
 
     it('Cannot remove story without token', async () => {
         const response = await request(app)
         .delete('/story/' + idStory)
-        const { story, success } = response.body;
+        const { story, success, message } = response.body;
         equal(success, false);
+        equal(story, undefined);
+        equal(message, 'INVALID_TOKEN');
     });
 
     it('Cannot remove story with token 2', async () => {
         const response = await request(app)
         .delete('/story/' + idStory)
         .set({ token: token2 });
-        const { story, success } = response.body;
+        const { story, success, message } = response.body;
         equal(success, false);
+        equal(story, undefined);
+        equal(message, 'CANNOT_FIND_STORY');
+        equal(response.status, 404);
     });
 });

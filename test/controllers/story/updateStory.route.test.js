@@ -5,7 +5,7 @@ const { Story } = require('../../../src/models/story.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 
-describe.only('Test PUT /story/:_id', () => {
+describe('Test PUT /story/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory;
     beforeEach('Create new story for test', async () => {
         await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
