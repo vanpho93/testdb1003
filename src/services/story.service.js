@@ -39,6 +39,14 @@ class StoryService {
         if (!story) throw new MyError('CANNOT_FIND_STORY', 404);
         return story;
     }
+
+    static async dislikeStory(idUser, _id) {
+        checkObjectId(idUser, _id);
+        const queryObject = { _id, fans: { $eq: idUser } };
+        const story = await Story.findOneAndUpdate(queryObject, { $pull: { fans: idUser } }, { new: true });
+        if (!story) throw new MyError('CANNOT_FIND_STORY', 404);
+        return story;
+    }
 }
 
 module.exports = { StoryService };

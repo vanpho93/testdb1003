@@ -2,6 +2,7 @@ const express = require('express');
 const { json } = require('body-parser');
 const { Story } = require('./models/story.model');
 const { storyRouter } = require('./controllers/story.route');
+const { commentRouter } = require('./controllers/comment.route');
 const { userRouter } = require('./controllers/user.route');
 
 const app = express();
@@ -17,6 +18,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use('/comment', commentRouter);
 app.use('/story', storyRouter);
 app.use('/user', userRouter);
 
