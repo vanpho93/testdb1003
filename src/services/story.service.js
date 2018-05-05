@@ -31,6 +31,13 @@ class StoryService {
         await User.findByIdAndUpdate(idUser, { $pull: { stories: _id } });
         return story;        
     }
+
+    static async likeStory(idUser, _id) {
+        checkObjectId(idUser, _id);
+        const story = await Story.findByIdAndUpdate(_id, { $push: { fans: idUser } }, { new: true });
+        if (!story) throw new MyError('CANNOT_FIND_STORY', 404);
+        return story;
+    }
 }
 
 module.exports = { StoryService };
