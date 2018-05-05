@@ -53,4 +53,52 @@ describe.only('Test PUT /comment/:_id', () => {
         const comment2 = await Comment.findOne();
         equal(comment2.content, 'abc');
     });
+
+    it('Cannot update comment with token 1', async () => {
+        await Story.findByIdAndRemove(idStory);
+        const response = await request(app)
+        .put('/comment/' + idComment)
+        .set({ token: token1 })
+        .send({ content: 'x' });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 404);
+        equal(message, 'CANNOT_FIND_COMMENT');
+        const comment2 = await Comment.findOne();
+        equal(comment2.content, 'abc');
+    });
+
+    it('Cannot update comment with invalid comment id', async () => {
+        await Story.findByIdAndRemove(idStory);
+        const response = await request(app)
+        .put('/comment/123')
+        .set({ token: token2 })
+        .send({ content: 'x' });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 400);
+        equal(message, 'INVALID_ID');
+        const comment2 = await Comment.findOne();
+        equal(comment2.content, 'abc');
+    });
+
+    it('Cannot update comment with invalid comment id', async () => {
+        await Comment.findByIdAndRemove(idComment);
+        const response = await request(app)
+        .put('/comment/' + idComment)
+        .set({ token: token2 })
+        .send({ content: 'x' });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 404);
+        equal(message, 'CANNOT_FIND_COMMENT');
+        const comment2 = await Comment.findOne();
+        equal(comment2, null);
+    });
 });
