@@ -5,7 +5,7 @@ const { Story } = require('../../../src/models/story.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 
-describe.only('Test POST /story/like/:_id', () => {
+describe('Test POST /story/like/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory;
     beforeEach('Create new story for test', async () => {
         await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
@@ -74,6 +74,20 @@ describe.only('Test POST /story/like/:_id', () => {
         equal(success, false);
         equal(story, undefined);
         equal(status, 404);
+        equal(message, 'CANNOT_FIND_STORY');
+    });
+
+    it('Can like a story twice', async () => {
+        await request(app).post('/story/like/' + idStory).set({ token: token2 }).send({});
+        const response = await request(app)
+        .post('/story/like/' + idStory)
+        .set({ token: token2 })
+        .send({});
+        const { status, body } = response;
+        const { story, success, message } = body;
+        equal(success, false);
+        equal(status, 404);
+        equal(story, undefined);
         equal(message, 'CANNOT_FIND_STORY');
     });
 });
