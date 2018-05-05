@@ -6,6 +6,7 @@ const { checkObjectId } = require('../helpers/checkObjectId');
 
 class CommentService {
     static async createComment(idUser, idStory, content) {
+        checkObjectId(idStory, idUser);
         if (!content) throw new MyError('INVALID_COMMENT', 400);
         const comment = new Comment({ author: idUser, content });
         const updateObj = { $push: { comments: comment._id } };

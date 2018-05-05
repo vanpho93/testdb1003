@@ -36,4 +36,66 @@ describe.only('Test POST /story/like/:_id', () => {
         equal(comment2.author.name, 'Ti Nguyen');
     });
 
+    it('Cannot create new comment without content', async () => {
+        const response = await request(app)
+        .post('/comment')
+        .set({ token: token2 })
+        .send({ idStory });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 400);
+        equal(message, 'INVALID_COMMENT');
+        const comment2 = await Comment.findOne().populate('author');
+        equal(comment2, null);
+    });
+
+    it('Cannot create new comment with invalid idStory', async () => {
+        const response = await request(app)
+        .post('/comment')
+        .set({ token: token2 })
+        .send({ content: 'x', idStory: '123' });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 400);
+        equal(message, 'INVALID_ID');
+        const comment2 = await Comment.findOne().populate('author');
+        equal(comment2, null);
+    });
+
+    it('Cannot create new comment with invalid token', async () => {
+        const response = await request(app)
+        .post('/comment')
+        .set({ token: '' })
+        .send({ content: 'x', idStory });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 400);
+        equal(message, 'INVALID_TOKEN');
+        const comment2 = await Comment.findOne().populate('author');
+        equal(comment2, null);
+    });
+
+    it('Cannot create new comment with invalid token', async () => {
+        await Story.findByIdAndRemove(idStory);
+        const response = await request(app)
+        .post('/comment')
+        .set({ token: token2 })
+        .send({ content: 'x', idStory });
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(status, 404);
+        equal(message, 'CANNOT_FIND_STORY');
+        const story = await Story.findOne().populate('author');
+        const comment2 = await Comment.findOne().populate('author');
+        equal(comment2, null);
+        equal(story, null);
+    });
 });
