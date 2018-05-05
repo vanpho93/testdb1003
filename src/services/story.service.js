@@ -1,5 +1,6 @@
 const { Story } = require('../models/story.model');
 const { User } = require('../models/user.model');
+const { Comment } = require('../models/comment.model');
 const { MyError } = require('../models/my-error.model');
 const { checkObjectId } = require('../helpers/checkObjectId');
 
@@ -28,6 +29,7 @@ class StoryService {
         const query = { _id, author: idUser };
         const story = await Story.findOneAndRemove(query);
         if (!story) throw new MyError('CANNOT_FIND_STORY', 404);
+        await Comment.remove({ _id: { $in: story.comments } });
         await User.findByIdAndUpdate(idUser, { $pull: { stories: _id } });
         return story;        
     }

@@ -3,8 +3,10 @@ const { equal } = require('assert');
 const { app } = require('../../../src/app');
 const { Story } = require('../../../src/models/story.model');
 const { User } = require('../../../src/models/user.model');
+const { Comment } = require('../../../src/models/comment.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
+const { CommentService } = require('../../../src/services/comment.service');
 
 describe('Test DELETE /story/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory;
@@ -20,6 +22,7 @@ describe('Test DELETE /story/:_id', () => {
         idUser2 = user2._id;
         const story = await StoryService.createStory(idUser1, 'xyz');
         idStory = story._id
+        await CommentService.createComment(idUser2, idStory, 'abcd');
     });
 
     it('Can remove a story', async () => {
@@ -34,6 +37,8 @@ describe('Test DELETE /story/:_id', () => {
         equal(storyDb, null);
         const user = await User.findById(idUser1);
         equal(user.stories.length, 0);
+        const comment = await Comment.findOne({});
+        equal(comment, null);
     });
 
     it('Cannot remove story with invalid id', async () => {

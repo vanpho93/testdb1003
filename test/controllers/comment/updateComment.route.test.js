@@ -7,7 +7,7 @@ const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 const { CommentService } = require('../../../src/services/comment.service');
 
-describe.only('Test PUT /comment/:_id', () => {
+describe('Test PUT /comment/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory, idComment;
 
     beforeEach('Create new story for test', async () => {
