@@ -15,6 +15,14 @@ class CommentService {
         await comment.save();
         return comment;
     }
+
+    static async updateComment(idUser, _id, content) {
+        checkObjectId(_id, idUser);
+        const query = { _id, author: idUser };
+        const comment = await Comment.findOneAndUpdate(query, { content }, { new: true });
+        if (!comment) throw new MyError('CANNOT_FIND_COMMENT', 404);
+        return comment;
+    }
 }
 
 module.exports = { CommentService };
