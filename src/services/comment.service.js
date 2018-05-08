@@ -32,6 +32,22 @@ class CommentService {
         await Story.findByIdAndUpdate(comment.story, { $pull: { comments: _id } });
         return comment;        
     }
+
+    static async likeComment(idUser, _id) {
+        checkObjectId(idUser, _id);
+        const queryObject = { _id, fans: { $ne: idUser } };
+        const comment = await Comment.findOneAndUpdate(queryObject, { $addToSet: { fans: idUser } }, { new: true });
+        if (!comment) throw new MyError('CANNOT_FIND_COMMENT', 404);
+        return comment;
+    }
+
+    static async dislikeComment(idUser, _id) {
+        checkObjectId(idUser, _id);
+        const queryObject = { _id, fans: { $eq: idUser } };
+        const comment = await Comment.findOneAndUpdate(queryObject, { $pull: { fans: idUser } }, { new: true });
+        if (!comment) throw new MyError('CANNOT_FIND_COMMENT', 404);
+        return comment;
+    }
 }
 
 module.exports = { CommentService };
