@@ -4,6 +4,7 @@ const { Story } = require('./models/story.model');
 const { storyRouter } = require('./controllers/story.route');
 const { commentRouter } = require('./controllers/comment.route');
 const { userRouter } = require('./controllers/user.route');
+const { friendRouter } = require('./controllers/friend.route');
 
 const app = express();
 
@@ -21,5 +22,6 @@ app.use((req, res, next) => {
 app.use('/comment', commentRouter);
 app.use('/story', storyRouter);
 app.use('/user', userRouter);
+app.use('/friend', friendRouter);
 
 module.exports = { app };
