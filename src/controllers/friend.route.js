@@ -10,4 +10,10 @@ friendRouter.post('/add/:idReceiver', mustBeUser, (req, res) => {
     .catch(res.onError);
 });
 
+friendRouter.post('/accept/:idSender', mustBeUser, (req, res) => {
+    FriendService.acceptFriendRequest(req.idUser, req.params.idSender)
+    .then(user => res.send({ success: true, user }))
+    .catch(res.onError);
+});
+
 module.exports = { friendRouter };
