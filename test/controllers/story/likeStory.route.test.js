@@ -77,7 +77,7 @@ describe('Test POST /story/like/:_id', () => {
         equal(message, 'CANNOT_FIND_STORY');
     });
 
-    it('Can like a story twice', async () => {
+    it('Cannot like a story twice', async () => {
         await request(app).post('/story/like/' + idStory).set({ token: token2 }).send({});
         const response = await request(app)
         .post('/story/like/' + idStory)

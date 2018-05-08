@@ -2,12 +2,15 @@ const request = require('supertest');
 const { equal } = require('assert');
 const { app } = require('../../../src/app');
 const { Story } = require('../../../src/models/story.model');
+const { Comment } = require('../../../src/models/comment.model');
 const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
+const { CommentService } = require('../../../src/services/comment.service');
 
-describe('Test POST /story/dislike/:_id', () => {
-    let token1, idUser1, token2, idUser2, idStory;
-    beforeEach('Create new story for test', async () => {
+describe('Test POST /comment/like/:_id', () => {
+    let token1, idUser1, token2, idUser2, idStory, idComment;
+
+    beforeEach('Create new comment for test', async () => {
         await UserService.signUp('teo@gmail.com', '123', 'Teo Nguyen');
         await UserService.signUp('ti@gmail.com', '123', 'Ti Nguyen');
         const user1 = await UserService.signIn('teo@gmail.com', '123');
@@ -17,27 +20,29 @@ describe('Test POST /story/dislike/:_id', () => {
         token2 = user2.token;
         idUser2 = user2._id;
         const story = await StoryService.createStory(idUser1, 'xyz');
-        await StoryService.likeStory(idUser2, story._id);
         idStory = story._id
+        const comment = await CommentService.createComment(idUser2, idStory, 'abc');
+        idComment = comment._id;
+        await CommentService.likeComment(idUser1, idComment);
     });
 
-    it('Can dislike a story', async () => {
+    it('Can dislike a comment', async () => {
         const response = await request(app)
-        .post('/story/dislike/' + idStory)
-        .set({ token: token2 })
+        .post('/comment/dislike/' + idComment)
+        .set({ token: token1 })
         .send({});
         const { status, body } = response;
-        const { story, success } = body;
+        const { comment, success } = body;
         equal(success, true);
-        equal(story.fans.length, 0);
-        const story2 = await Story.findById(idStory).populate('fans');
-        equal(story2.fans.length, 0);
+        equal(comment.fans.length, 0);
+        const commentDb = await Comment.findById(idComment).populate('fans');
+        equal(commentDb.fans.length, 0);
     });
 
-    it('Cannot dislike a story with invalid idStory', async () => {
+    it('Cannot dislike a comment with invalid idStory', async () => {
         const response = await request(app)
-        .post('/story/dislike/' + 123)
-        .set({ token: token2 })
+        .post('/comment/dislike/' + 123)
+        .set({ token: token1 })
         .send({});
         const { status, body } = response;
         const { story, success, message } = body;
@@ -45,50 +50,68 @@ describe('Test POST /story/dislike/:_id', () => {
         equal(story, undefined);
         equal(message, 'INVALID_ID');
         equal(status, 400);
-        const story2 = await Story.findById(idStory).populate('fans');
-        equal(story2.fans.length, 1);
+        const commentDb = await Comment.findById(idComment).populate('fans');
+        equal(commentDb.fans.length, 1);
     });
 
-    it('Cannot dislike a story without token', async () => {
+    it('Cannot dislike a comment without token', async () => {
         const response = await request(app)
-        .post('/story/like/' + idStory)
+        .post('/comment/like/' + idComment)
         .set({ token: '' })
         .send({});
         const { status, body } = response;
-        const { story, success, message } = body;
+        const { comment, success, message } = body;
         equal(success, false);
-        equal(story, undefined);
+        equal(comment, undefined);
         equal(message, 'INVALID_TOKEN');
         equal(status, 400);
-        const story2 = await Story.findById(idStory).populate('fans');
-        equal(story2.fans.length, 1);
+        const commentDb = await Comment.findById(idComment).populate('fans');
+        equal(commentDb.fans.length, 1);
     });
 
-    it('Cannot like a removed story', async () => {
-        StoryService.removeStory(idUser1, idStory);
+    it('Cannot dislike a removed comment', async () => {
+        await CommentService.removeComment(idUser2, idComment);
         const response = await request(app)
-        .post('/story/dislike/' + idStory)
+        .post('/comment/dislike/' + idComment)
         .set({ token: token2 })
         .send({});
         const { status, body } = response;
-        const { story, success, message } = body;
+        const { comment, success, message } = body;
         equal(success, false);
-        equal(story, undefined);
+        equal(comment, undefined);
+        equal(message, 'CANNOT_FIND_COMMENT');
         equal(status, 404);
-        equal(message, 'CANNOT_FIND_STORY');
+        const commentDb = await Comment.findById(idComment).populate('fans');
+        equal(commentDb, null);
     });
 
-    it('Can like a story twice', async () => {
-        await request(app).post('/story/dislike/' + idStory).set({ token: token2 }).send({});
+    it('Cannot dislike a comment twice', async () => {
+        await request(app).post('/comment/dislike/' + idComment).set({ token: token1 }).send({});
         const response = await request(app)
-        .post('/story/dislike/' + idStory)
-        .set({ token: token2 })
+        .post('/comment/dislike/' + idComment)
+        .set({ token: token1 })
         .send({});
         const { status, body } = response;
-        const { story, success, message } = body;
+        const { comment, success, message } = body;
         equal(success, false);
         equal(status, 404);
-        equal(story, undefined);
-        equal(message, 'CANNOT_FIND_STORY');
+        equal(comment, undefined);
+        equal(message, 'CANNOT_FIND_COMMENT');
+    });
+
+    it('Cannot dislike a comment of a removed story', async () => {
+        await StoryService.removeStory(idUser1, idStory);
+        const response = await request(app)
+        .post('/comment/dislike/' + idComment)
+        .set({ token: token1 })
+        .send({});
+        const { status, body } = response;
+        const { comment, success, message } = body;
+        equal(success, false);
+        equal(comment, undefined);
+        equal(message, 'CANNOT_FIND_COMMENT');
+        equal(status, 404);
+        const commentDb = await Comment.findById(idComment).populate('fans');
+        equal(commentDb, null);
     });
 });

@@ -7,7 +7,7 @@ const { UserService } = require('../../../src/services/user.service');
 const { StoryService } = require('../../../src/services/story.service');
 const { CommentService } = require('../../../src/services/comment.service');
 
-describe.only('Test POST /comment/like/:_id', () => {
+describe('Test POST /comment/like/:_id', () => {
     let token1, idUser1, token2, idUser2, idStory, idComment;
 
     beforeEach('Create new story for test', async () => {
@@ -84,7 +84,7 @@ describe.only('Test POST /comment/like/:_id', () => {
         equal(commentDb, null);
     });
 
-    it('Can like a story twice', async () => {
+    it('Cannot like a comment twice', async () => {
         await request(app).post('/comment/like/' + idComment).set({ token: token1 }).send({});
         const response = await request(app)
         .post('/comment/like/' + idComment)
