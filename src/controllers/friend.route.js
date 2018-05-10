@@ -16,4 +16,10 @@ friendRouter.post('/accept/:idSender', mustBeUser, (req, res) => {
     .catch(res.onError);
 });
 
+friendRouter.post('/decline/:idSender', mustBeUser, (req, res) => {
+    FriendService.declineFriendRequest(req.idUser, req.params.idSender)
+    .then(user => res.send({ success: true, user }))
+    .catch(res.onError);
+});
+
 module.exports = { friendRouter };
