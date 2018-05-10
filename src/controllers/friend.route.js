@@ -22,4 +22,10 @@ friendRouter.post('/decline/:idSender', mustBeUser, (req, res) => {
     .catch(res.onError);
 });
 
+friendRouter.delete('/request/:idReceiver', mustBeUser, (req, res) => {
+    FriendService.removeFriendRequest(req.idUser, req.params.idReceiver)
+    .then(user => res.send({ success: true, user }))
+    .catch(res.onError);
+});
+
 module.exports = { friendRouter };
