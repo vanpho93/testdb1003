@@ -27,7 +27,7 @@ class FriendService {
         checkObjectId(idSender, idReceiver);
         const queryObjectReceiver = {
             _id: idReceiver,
-            incommingRequests: { $eq: idSender }
+            incommingRequests: idSender
         };
         const updateObjectReceiver = {
             $pull: { incommingRequests: idSender },
@@ -37,7 +37,7 @@ class FriendService {
         if (!receiver) throw new MyError('CANNOT_FIND_USER', 404);
         const queryObjectSender = {
             _id: idSender,
-            sentRequests: { $eq: idReceiver }
+            sentRequests: idReceiver
         };
         const updateObjectSender = {
             $pull: { sentRequests: idReceiver },
@@ -56,7 +56,7 @@ class FriendService {
         checkObjectId(idSender, idReceiver);
         const queryObjectReceiver = {
             _id: idReceiver,
-            incommingRequests: { $eq: idSender }
+            incommingRequests: idSender
         };
         const updateObjectReceiver = {
             $pull: { incommingRequests: idSender }
@@ -65,7 +65,7 @@ class FriendService {
         if (!receiver) throw new MyError('CANNOT_FIND_USER', 404);
         const queryObjectSender = {
             _id: idSender,
-            sentRequests: { $eq: idReceiver }
+            sentRequests: idReceiver
         };
         const updateObjectSender = {
             $pull: { sentRequests: idReceiver }
@@ -83,7 +83,7 @@ class FriendService {
         checkObjectId(idSender, idReceiver);
         const queryObjectReceiver = {
             _id: idReceiver,
-            incommingRequests: { $eq: idSender }
+            incommingRequests: idSender
         };
         const updateObjectReceiver = {
             $pull: { incommingRequests: idSender }
@@ -96,7 +96,7 @@ class FriendService {
         if (!receiver) throw new MyError('CANNOT_FIND_USER', 404);
         const queryObjectSender = {
             _id: idSender,
-            sentRequests: { $eq: idReceiver }
+            sentRequests: idReceiver
         };
         const updateObjectSender = {
             $pull: { sentRequests: idReceiver }
@@ -110,7 +110,7 @@ class FriendService {
         checkObjectId(idUser, idFriend);
         const queryObjectUser = {
             _id: idUser,
-            friends: { $eq: idFriend }
+            friends: idFriend
         };
         const updateObjectUser = {
             $pull: { friends: idFriend }
@@ -119,7 +119,7 @@ class FriendService {
         if (!user) throw new MyError('CANNOT_FIND_USER', 404);
         const queryObjectFriend = {
             _id: idFriend,
-            friends: { $eq: idUser }
+            friends: idUser
         };
         const updateObjectFriend = {
             $pull: { friends: idUser }
