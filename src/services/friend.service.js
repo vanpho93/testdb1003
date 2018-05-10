@@ -105,6 +105,33 @@ class FriendService {
         if (!sender) throw new MyError('CANNOT_FIND_USER', 404);
         return receiver;
     }
+
+    static async removeFriend(idUser, idFriend) {
+        checkObjectId(idUser, idFriend);
+        const queryObjectUser = {
+            _id: idUser,
+            friends: { $eq: idFriend }
+        };
+        const updateObjectUser = {
+            $pull: { friends: idFriend }
+        };
+        const user = await User.findOneAndUpdate(queryObjectUser, updateObjectUser);
+        if (!user) throw new MyError('CANNOT_FIND_USER', 404);
+        const queryObjectFriend = {
+            _id: idFriend,
+            friends: { $eq: idUser }
+        };
+        const updateObjectFriend = {
+            $pull: { friends: idUser }
+        };
+        const options = {
+            new: true,
+            fields: { name: 1 }
+        };
+        const friend = await User.findOneAndUpdate(queryObjectFriend, updateObjectFriend, options);
+        if (!friend) throw new MyError('CANNOT_FIND_USER', 404);
+        return friend;
+    }
 }
 
 module.exports = { FriendService };
