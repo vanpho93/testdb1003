@@ -11,7 +11,8 @@
   },
   "scripts": {
     "test": "nodemon --exec mocha --recursive",
-    "server": "nodemon src/index.js"
+    "server": "nodemon src/index.js",
+    "start": "node src/index.js"
   },
   "dependencies": {
     "bcrypt": "^2.0.0",
