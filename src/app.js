@@ -1,4 +1,5 @@
 const express = require('express');
+const cors = require('cors');
 const { json } = require('body-parser');
 const { Story } = require('./models/story.model');
 const { storyRouter } = require('./controllers/story.route');
@@ -9,6 +10,7 @@ const { friendRouter } = require('./controllers/friend.route');
 const app = express();
 
 app.use(json());
+app.use(cors());
 
 app.use((req, res, next) => {
     res.onError = function(error) {
