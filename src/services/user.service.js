@@ -1,4 +1,5 @@
 const { hash, compare } = require('bcrypt');
+const faker = require('faker');
 const { sign, verify } = require('../helpers/jwt');
 const { User } = require('../models/user.model');
 const { MyError } = require('../models/my-error.model');
@@ -41,3 +42,9 @@ class UserService {
 }
 
 module.exports = { UserService };
+
+// for(let i = 0; i < 20; i++) {
+//     const name = faker.name.findName();
+//     const email = faker.internet.email(name);
+//     UserService.signUp(email, '123', name);
+// }

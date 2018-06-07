@@ -3,6 +3,17 @@ const { MyError } = require('../models/my-error.model');
 const { checkObjectId } = require('../helpers/checkObjectId');
 
 class FriendService {
+
+    static async getAllUsers(idUser) {
+        const { friends } = await User.findById(idUser, { friends: 1 }).populate('friends', 'name');
+        const { sentRequests } = await User.findById(idUser, { sentRequests: 1 }).populate('sentRequests', 'name');
+        const { incommingRequests } = await User.findById(idUser, { incommingRequests: 1 }).populate('incommingRequests', 'name');
+        const knownUsers = friends.concat(sentRequests).concat(incommingRequests);
+        const _idKnownUsers = knownUsers.map(u => u._id).concat(idUser);
+        const otherUsers = await User.find({ _id: { $nin: _idKnownUsers } }, { name: 1 })
+        return { friends, sentRequests, incommingRequests, otherUsers };
+    }
+
     static async addFriend(idSender, idReceiver) {
         checkObjectId(idSender, idReceiver);
         const queryObject = {
