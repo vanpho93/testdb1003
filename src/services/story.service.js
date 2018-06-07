@@ -6,7 +6,13 @@ const { checkObjectId } = require('../helpers/checkObjectId');
 
 class StoryService {
     static getAll() {
-        return Story.find({}).sort({ _id: -1 }).populate('comments').populate('author', 'name');
+        const populateObject = {
+            path: 'comments',
+            populate: { path: 'author', select: 'name' }
+        };
+        return Story.find({}).sort({ _id: -1 })
+            .populate('author', 'name')
+            .populate(populateObject);
     }
 
     static async createStory(idUser, content) {
