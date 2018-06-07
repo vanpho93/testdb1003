@@ -6,7 +6,7 @@ const friendRouter = Router();
 
 friendRouter.get('/', mustBeUser, (req, res) => {
     FriendService.getAllUsers(req.idUser)
-    .then(users => res.send({ success: true, users }));
+    .then(people => res.send({ success: true, people }));
 });
 
 friendRouter.post('/add/:idReceiver', mustBeUser, (req, res) => {
